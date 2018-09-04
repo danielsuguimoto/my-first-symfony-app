@@ -1,0 +1,7 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}View post{% endblock %}
+
+{% block body %}
+    {{ include('micro_post/raw-post.html.twig', { 'post': post }) }}
+{% endblock %}
