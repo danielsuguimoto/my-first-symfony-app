@@ -1,4 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/home/partnerfusion/sf-teste/templates/base.html.twig</file>
+            <file>file:/home/partnerfusion/sf-teste/config/packages/security.yaml</file>
+            <file>file:/home/partnerfusion/sf-teste/templates/security/login.html.twig</file>
+            <file>file:/home/partnerfusion/sf-teste/var/log/dev.log</file>
+            <file>file:/home/partnerfusion/sf-teste/templates/micro_post/index.html.twig</file>
+            <file>file:/home/partnerfusion/sf-teste/src/Entity/User.php</file>
+            <file>file:/home/partnerfusion/sf-teste/src/Form/UserType.php</file>
+            <file>file:/home/partnerfusion/sf-teste/templates/micro_post/raw-post.html.twig</file>
+            <file>file:/home/partnerfusion/sf-teste/src/Entity/MicroPost.php</file>
+            <file>file:/home/partnerfusion/sf-teste/src/Migrations/Version20180904194115.php</file>
+            <file>file:/home/partnerfusion/sf-teste/src/Controller/RegisterController.php</file>
+            <file>file:/home/partnerfusion/sf-teste/src/DataFixtures/AppFixtures.php</file>
+            <file>file:/home/partnerfusion/sf-teste/src/Repository/UserRepository.php</file>
+            <file>file:/home/partnerfusion/sf-teste/src/Controller/MicroPostController.php</file>
+            <file>file:/home/partnerfusion/sf-teste/templates/register/register.html.twig</file>
+        </group>
+    </open-files>
 </project-private>

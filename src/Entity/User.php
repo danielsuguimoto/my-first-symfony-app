@@ -3,7 +3,9 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Serializable;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -13,8 +15,12 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @UniqueEntity(fields="email", message="This e-mail is already used")
  * @UniqueEntity(fields="username", message="This username is already used")
  */
-class User implements UserInterface, \Serializable
+class User implements UserInterface, Serializable
 {
+    const ROLE_USER = 'ROLE_USER';
+    const ROLE_ADMIN = 'ROLE_ADMIN';
+
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -55,12 +61,44 @@ class User implements UserInterface, \Serializable
     private $fullname;
     
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\MicroPost", mappedBy="user")
+     * @var array 
+     * @ORM\Column(type="simple_array")
+     */
+    private $roles;
+
+    /**
+     * @ORM\OneToMany(targetEntity="MicroPost", mappedBy="user")
      */
     private $posts;
     
+    /**
+     * @ORM\ManyToMany(targetEntity="User", mappedBy="following")
+     */
+    private $followers;
+    
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\User", inversedBy="followers")
+     * @ORM\JoinTable(name="following",
+     *     joinColumns={
+     *         @ORM\JoinColumn(name="user_id", referencedColumnName="id")
+     *     },
+     *     inverseJoinColumns={
+     *         @ORM\JoinColumn(name="following_user_id", referencedColumnName="id")
+     *     }
+     * )
+     */
+    private $following;
+    
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\MicroPost", mappedBy="likedBy")
+     */
+    private $postsLiked;
+    
     public function __construct() {
-        $this->posts = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->posts = new ArrayCollection();
+        $this->followers = new ArrayCollection();
+        $this->following = new ArrayCollection();
+        $this->postsLiked = new ArrayCollection();
     }
     
     public function eraseCredentials() {
@@ -72,9 +110,11 @@ class User implements UserInterface, \Serializable
     }
 
     public function getRoles() {
-        return [
-            'ROLE_USER'
-        ];
+        return $this->roles;
+    }
+    
+    function setRoles(array $roles) {
+        $this->roles = $roles;
     }
 
     public function getSalt() {
@@ -139,5 +179,34 @@ class User implements UserInterface, \Serializable
     
     function getPosts() {
         return $this->posts;
+    }
+    
+     /**
+     * @return Collection
+     */
+    function getFollowers() {
+        return $this->followers;
+    }
+
+    /**
+     * @return Collection
+     */
+    function getFollowing() {
+        return $this->following;
+    }
+
+    public function follow(User $user) {
+        if ($this->getFollowing()->contains($user)) {
+            return;
+        }
+        
+        $this->getFollowing()->add($user);
+    }
+
+    /**
+     * @return Collection
+     */
+    function getPostsLiked() {
+        return $this->postsLiked;
     }
 }
