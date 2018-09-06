@@ -7,7 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Serializable;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -15,7 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @UniqueEntity(fields="email", message="This e-mail is already used")
  * @UniqueEntity(fields="username", message="This username is already used")
  */
-class User implements UserInterface, Serializable
+class User implements AdvancedUserInterface, Serializable
 {
     const ROLE_USER = 'ROLE_USER';
     const ROLE_ADMIN = 'ROLE_ADMIN';
@@ -77,7 +77,7 @@ class User implements UserInterface, Serializable
     private $followers;
     
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\User", inversedBy="followers")
+     * @ORM\ManyToMany(targetEntity="User", inversedBy="followers")
      * @ORM\JoinTable(name="following",
      *     joinColumns={
      *         @ORM\JoinColumn(name="user_id", referencedColumnName="id")
@@ -90,15 +90,27 @@ class User implements UserInterface, Serializable
     private $following;
     
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\MicroPost", mappedBy="likedBy")
+     * @ORM\ManyToMany(targetEntity="MicroPost", mappedBy="likedBy")
      */
     private $postsLiked;
+    
+    /**
+     * @ORM\Column(type="string", nullable=true, length=30)
+     */
+    private $confirmatioToken;
+    
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $enabled;
     
     public function __construct() {
         $this->posts = new ArrayCollection();
         $this->followers = new ArrayCollection();
         $this->following = new ArrayCollection();
         $this->postsLiked = new ArrayCollection();
+        $this->roles = [self::ROLE_USER];
+        $this->enabled = false;
     }
     
     public function eraseCredentials() {
@@ -129,7 +141,8 @@ class User implements UserInterface, Serializable
         return serialize([
             $this->id,
             $this->username,
-            $this->password
+            $this->password,
+            $this->enabled
         ]);
     }
 
@@ -137,7 +150,8 @@ class User implements UserInterface, Serializable
         list(
             $this->id,
             $this->username,
-            $this->password    
+            $this->password,
+            $this->enabled
         ) = unserialize($serialized);
     }
 
@@ -208,5 +222,37 @@ class User implements UserInterface, Serializable
      */
     function getPostsLiked() {
         return $this->postsLiked;
+    }
+    
+    public function getConfirmatioToken() {
+        return $this->confirmatioToken;
+    }
+
+    public function setConfirmatioToken($confirmatioToken) {
+        $this->confirmatioToken = $confirmatioToken;
+    }
+    
+    public function getEnabled() {
+        return $this->enabled;
+    }
+
+    public function setEnabled($enabled) {
+        $this->enabled = $enabled;
+    }
+    
+    public function isAccountNonExpired() {
+        return true;
+    }
+
+    public function isAccountNonLocked() {
+        return true;
+    }
+
+    public function isCredentialsNonExpired() {
+        return true;
+    }
+
+    public function isEnabled() {
+        return $this->enabled;
     }
 }

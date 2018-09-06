@@ -6,6 +6,7 @@
 parameters:
     locale: 'en'
     hello_message: 'Hello '
+    email_from: '%env(MAILER_FROM)%'
 
 services:
     # default configuration for services in *this* file
@@ -36,9 +37,16 @@ services:
         arguments:
             $locale: '%locale%'
 
+    App\Mailer\Mailer:
+        arguments:
+            $emailFrom: '%email_from%'
+
     app.greeting:
         public: true
         alias: App\Service\Greeting
-
+    
+    App\EventListener\LikeNotificationSubscriber:
+        tags:
+            - { name: doctrine.event_subscriber, connection: default }
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
