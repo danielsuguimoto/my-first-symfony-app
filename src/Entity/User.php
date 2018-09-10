@@ -104,6 +104,11 @@ class User implements AdvancedUserInterface, Serializable
      */
     private $enabled;
     
+    /**
+     * @ORM\OneToOne(targetEntity="App\Entity\UserPreferences", cascade={"persist"})
+     */
+    private $preferences;
+    
     public function __construct() {
         $this->posts = new ArrayCollection();
         $this->followers = new ArrayCollection();
@@ -238,6 +243,17 @@ class User implements AdvancedUserInterface, Serializable
 
     public function setEnabled($enabled) {
         $this->enabled = $enabled;
+    }
+    
+    /**
+     * @return UserPreferences|null
+     */
+    public function getPreferences() {
+        return $this->preferences;
+    }
+
+    public function setPreferences($preferences) {
+        $this->preferences = $preferences;
     }
     
     public function isAccountNonExpired() {

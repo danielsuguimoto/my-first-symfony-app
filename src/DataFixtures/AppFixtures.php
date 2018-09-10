@@ -10,6 +10,7 @@ namespace App\DataFixtures;
 
 use App\Entity\MicroPost;
 use App\Entity\User;
+use App\Entity\UserPreferences;
 use DateTime;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -65,6 +66,12 @@ class AppFixtures extends Fixture {
         'How was your day?'
     ];
     
+    const  LANGUAGES = [
+        'en',
+        'fr'
+    ];
+
+
     /**
      * @var UserPasswordEncoderInterface
      */
@@ -109,6 +116,11 @@ class AppFixtures extends Fixture {
             
             $this->addReference($userData['username'], $user);
 
+            $preferences = new UserPreferences();
+            $preferences->setLocale(self::LANGUAGES[rand(0, 1)]);
+            
+            $user->setPreferences($preferences);
+            
             $manager->persist($user);
             $manager->flush();
         }
